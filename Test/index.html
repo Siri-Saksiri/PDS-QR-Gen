@@ -14,9 +14,7 @@
       --text-glow: rgba(85, 159, 210, 0.6);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -24,7 +22,6 @@
       color: #fff;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
@@ -100,10 +97,7 @@
       scrollbar-color: var(--accent) #1e1e1e;
     }
 
-    #links-container::-webkit-scrollbar {
-      width: 6px;
-    }
-
+    #links-container::-webkit-scrollbar { width: 6px; }
     #links-container::-webkit-scrollbar-thumb {
       background-color: var(--accent);
       border-radius: 10px;
@@ -133,26 +127,15 @@
       to { text-shadow: 0 0 16px rgba(85, 159, 210, 0.8); }
     }
 
-    /* Mobile Optimizations */
     @media (max-width: 480px) {
       .container {
         padding: 20px;
         max-width: 95%;
         border-radius: 16px;
       }
-
-      h2 {
-        font-size: 1.25rem;
-      }
-
-      button {
-        font-size: 0.95rem;
-        padding: 10px;
-      }
-
-      footer {
-        font-size: 0.8rem;
-      }
+      h2 { font-size: 1.25rem; }
+      button { font-size: 0.95rem; padding: 10px; }
+      footer { font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -167,7 +150,8 @@
 
     <button id="preview-btn">Generate Preview (First QR)</button>
     <img id="preview" src="" alt="QR Preview" style="display:none;" />
-    <button id="export-btn" disabled>Export All QR Codes</button>
+    <button id="export-btn" disabled>Export All QR Codes (ZIP)</button>
+    <button id="download-png-btn" disabled>Download as PNG</button>
   </div>
 
   <footer>
@@ -180,7 +164,10 @@
     const linksContainer = document.getElementById('links-container');
     const previewBtn = document.getElementById('preview-btn');
     const exportBtn = document.getElementById('export-btn');
+    const downloadPngBtn = document.getElementById('download-png-btn');
     const previewImg = document.getElementById('preview');
+
+    let currentQRUrl = '';
 
     function updateLinks() {
       linksContainer.innerHTML = '';
@@ -209,9 +196,10 @@
         alert("Size must be in format WIDTHxHEIGHT (e.g. 400x400).");
         return;
       }
-      const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(firstLink)}`;
-      previewImg.src = url;
+      currentQRUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(firstLink)}`;
+      previewImg.src = currentQRUrl;
       previewImg.style.display = 'block';
+      downloadPngBtn.disabled = false;
     });
 
     exportBtn.addEventListener('click', async () => {
@@ -236,6 +224,17 @@
       a.download = 'QR_Codes.zip';
       a.click();
       URL.revokeObjectURL(a.href);
+    });
+
+    downloadPngBtn.addEventListener('click', async () => {
+      if (!currentQRUrl) return alert("Please generate a QR code first!");
+      const blob = await fetch(currentQRUrl).then(res => res.blob());
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'qr_code.png';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
     // Load JSZip dynamically
