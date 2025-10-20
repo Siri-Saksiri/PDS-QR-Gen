@@ -6,10 +6,11 @@
   <title>QR Code Generator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
       color: #fff;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
@@ -18,37 +19,52 @@
 
     .container {
       background: #1e1e1e;
-      padding: 20px 30px;
-      border-radius: 16px;
+      padding: 24px 30px;
+      border-radius: 20px;
       width: 400px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      box-shadow: 0 0 25px rgba(60, 150, 255, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 35px rgba(60, 150, 255, 0.25);
     }
 
     input[type="text"], input[type="number"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 8px 0;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
-      background: #333;
+      background: #2a2a2a;
       color: #fff;
+      transition: background 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      background: #333;
+      box-shadow: 0 0 6px #3e7cb1;
     }
 
     button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 10px;
-      background: #3e7cb1;
+      background: linear-gradient(135deg, #3e7cb1, #559fd2);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
 
     button:hover {
-      background: #559fd2;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(85, 159, 210, 0.5);
     }
 
     #links-container {
@@ -60,13 +76,32 @@
     img {
       display: block;
       margin: 15px auto;
-      border-radius: 8px;
+      border-radius: 10px;
       background: white;
       max-width: 100%;
     }
 
     h2 {
       text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      color: #bcdfff;
+      text-shadow: 0 0 10px rgba(85, 159, 210, 0.6);
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #9cc9ff;
+      text-shadow: 0 0 8px rgba(85, 159, 210, 0.4);
+      letter-spacing: 0.3px;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 8px rgba(85, 159, 210, 0.4); }
+      to { text-shadow: 0 0 16px rgba(85, 159, 210, 0.8); }
     }
   </style>
 </head>
@@ -83,6 +118,10 @@
     <img id="preview" src="" alt="QR Preview" style="display:none;" />
     <button id="export-btn" disabled>Export All QR Codes</button>
   </div>
+
+  <footer>
+    Developed by <strong>Siri Saksiri</strong> (PDS Computer Club’s President)
+  </footer>
 
   <script>
     const quantityInput = document.getElementById('quantity');
@@ -141,11 +180,11 @@
       }
 
       const blobZip = await zip.generateAsync({ type: 'blob' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blobZip);
-      link.download = 'QR_Codes.zip';
-      link.click();
-      URL.revokeObjectURL(link.href);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blobZip);
+      a.download = 'QR_Codes.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
     });
 
     // Load JSZip dynamically
