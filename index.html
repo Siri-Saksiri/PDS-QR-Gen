@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Code Generator</title>
+  <title>PDS QR Code Generator</title>
   <style>
+    :root {
+      --bg-dark: #0d0d0d;
+      --card-bg: #1e1e1e;
+      --input-bg: #2a2a2a;
+      --accent: #3e7cb1;
+      --accent-light: #559fd2;
+      --text-glow: rgba(85, 159, 210, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: radial-gradient(circle at top, #1a1a1a, #0d0d0d);
+      background: radial-gradient(circle at top, #1a1a1a, var(--bg-dark));
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -15,20 +28,45 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      padding: 20px;
     }
 
     .container {
-      background: #1e1e1e;
-      padding: 24px 30px;
+      background: var(--card-bg);
+      padding: 24px 28px;
       border-radius: 20px;
-      width: 400px;
+      width: 100%;
+      max-width: 420px;
       box-shadow: 0 0 25px rgba(60, 150, 255, 0.15);
       transition: transform 0.2s ease, box-shadow 0.3s ease;
+      text-align: center;
     }
 
     .container:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
       box-shadow: 0 0 35px rgba(60, 150, 255, 0.25);
+    }
+
+    .logo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: #bcdfff;
+      text-shadow:
+        0 0 10px var(--accent-light),
+        0 0 20px var(--accent-light),
+        0 0 30px rgba(85, 159, 210, 0.7);
+      letter-spacing: 3px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      color: #bcdfff;
+      text-shadow: 0 0 10px var(--text-glow);
+      font-size: 1.4rem;
     }
 
     input[type="text"], input[type="number"] {
@@ -38,27 +76,28 @@
       border: none;
       border-radius: 10px;
       outline: none;
-      background: #2a2a2a;
+      background: var(--input-bg);
       color: #fff;
+      font-size: 1rem;
       transition: background 0.2s ease, box-shadow 0.3s ease;
     }
 
     input:focus {
       background: #333;
-      box-shadow: 0 0 6px #3e7cb1;
+      box-shadow: 0 0 6px var(--accent);
     }
 
     button {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
-      background: linear-gradient(135deg, #3e7cb1, #559fd2);
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 1rem;
       transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
 
@@ -71,6 +110,17 @@
       margin: 10px 0;
       max-height: 200px;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) #1e1e1e;
+    }
+
+    #links-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #links-container::-webkit-scrollbar-thumb {
+      background-color: var(--accent);
+      border-radius: 10px;
     }
 
     img {
@@ -79,34 +129,55 @@
       border-radius: 10px;
       background: white;
       max-width: 100%;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-      color: #bcdfff;
-      text-shadow: 0 0 10px rgba(85, 159, 210, 0.6);
+      height: auto;
     }
 
     footer {
-      margin-top: 20px;
+      margin-top: 24px;
       text-align: center;
-      font-size: 13px;
+      font-size: 0.9rem;
       color: #9cc9ff;
-      text-shadow: 0 0 8px rgba(85, 159, 210, 0.4);
-      letter-spacing: 0.3px;
+      text-shadow: 0 0 8px var(--text-glow);
+      letter-spacing: 0.4px;
       animation: glow 3s ease-in-out infinite alternate;
     }
 
     @keyframes glow {
-      from { text-shadow: 0 0 8px rgba(85, 159, 210, 0.4); }
+      from { text-shadow: 0 0 8px var(--text-glow); }
       to { text-shadow: 0 0 16px rgba(85, 159, 210, 0.8); }
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        max-width: 95%;
+        border-radius: 16px;
+      }
+
+      .logo {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      button {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+
+      footer {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <div class="logo">PDS</div>
     <h2>QR Code Generator</h2>
 
     <input type="number" id="quantity" min="1" max="100" value="1" placeholder="How many QR codes?" />
