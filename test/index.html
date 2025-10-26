@@ -1,0 +1,81 @@
+<script>
+  const quantityInput = document.getElementById('quantity');
+  const sizeInput = document.getElementById('size');
+  const linksContainer = document.getElementById('links-container');
+  const previewBtn = document.getElementById('preview-btn');
+  const exportBtn = document.getElementById('export-btn');
+  const previewImg = document.getElementById('preview');
+
+  function updateLinks() {
+    let count = parseInt(quantityInput.value) || 1;
+
+    // Limit max to 1000
+    if (count > 1000) {
+      count = 1000;
+      quantityInput.value = 1000;
+    } else if (count < 1) {
+      count = 1;
+      quantityInput.value = 1;
+    }
+
+    linksContainer.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = `Link for QR #${i + 1}`;
+      input.className = 'qr-link';
+      linksContainer.appendChild(input);
+    }
+    exportBtn.disabled = count < 1;
+  }
+
+  quantityInput.addEventListener('input', updateLinks);
+  updateLinks();
+
+  previewBtn.addEventListener('click', () => {
+    const size = sizeInput.value.trim();
+    const firstLink = document.querySelector('.qr-link')?.value.trim();
+    if (!firstLink) {
+      alert("First QR code link is empty!");
+      return;
+    }
+    if (!size.includes('x')) {
+      alert("Size must be in format WIDTHxHEIGHT (e.g. 400x400).");
+      return;
+    }
+    const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(firstLink)}`;
+    previewImg.src = url;
+    previewImg.style.display = 'block';
+  });
+
+  exportBtn.addEventListener('click', async () => {
+    const size = sizeInput.value.trim();
+    const links = Array.from(document.querySelectorAll('.qr-link'))
+      .map(l => l.value.trim())
+      .filter(Boolean);
+    if (links.length === 0) {
+      alert("Please fill in all QR data fields.");
+      return;
+    }
+
+    const zip = new JSZip();
+    for (let i = 0; i < links.length; i++) {
+      const link = links[i];
+      const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&data=${encodeURIComponent(link)}`;
+      const blob = await fetch(url).then(res => res.blob());
+      zip.file(`qr_${i + 1}.png`, blob);
+    }
+
+    const blobZip = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blobZip);
+    a.download = 'QR_Codes.zip';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  // Load JSZip dynamically
+  const jszipScript = document.createElement('script');
+  jszipScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+  document.body.appendChild(jszipScript);
+</script>
