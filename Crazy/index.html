@@ -1,4 +1,206 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="/favicon-32x32.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDS QR Code Generator</title>
+  <style>
+    :root {
+      --bg-dark: #0d0d0d;
+      --card-bg: #1e1e1e;
+      --input-bg: #2a2a2a;
+      --accent: #3e7cb1;
+      --accent-light: #559fd2;
+      --text-glow: rgba(85, 159, 210, 0.5);
+      --pds-blue: #3a8de0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #1a1a1a, var(--bg-dark));
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      padding: 24px 28px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 25px rgba(60, 150, 255, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      text-align: center;
+    }
+
+    .container:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 35px rgba(60, 150, 255, 0.25);
+    }
+
+    .logo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: var(--pds-blue);
+      text-shadow: 0 0 8px rgba(58, 141, 224, 0.3);
+      letter-spacing: 3px;
+      font-family: "Poppins", sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      color: #bcdfff;
+      text-shadow: 0 0 10px var(--text-glow);
+      font-size: 1.4rem;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: var(--input-bg);
+      color: #fff;
+      font-size: 1rem;
+      transition: background 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      background: #333;
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(85, 159, 210, 0.5);
+    }
+
+    #links-container {
+      margin: 10px 0;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) #1e1e1e;
+    }
+
+    #links-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #links-container::-webkit-scrollbar-thumb {
+      background-color: var(--accent);
+      border-radius: 10px;
+    }
+
+    img {
+      display: block;
+      margin: 15px auto;
+      border-radius: 10px;
+      background: white;
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #9cc9ff;
+      text-shadow: 0 0 8px var(--text-glow);
+      letter-spacing: 0.4px;
+      animation: glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 8px var(--text-glow); }
+      to { text-shadow: 0 0 14px rgba(85, 159, 210, 0.7); }
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        max-width: 95%;
+        border-radius: 16px;
+      }
+
+      .logo {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      button {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+
+      footer {
+        font-size: 0.8rem;
+      }
+    }
+      .logo-image {
+      max-width: 150px; /* adjust size */
+      height: auto;
+      margin: 0 auto 15px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="PDS-Qr-Gen.png" alt="PDS QR Generator Logo" class="logo-image" />
+    <div class="logo">PDS</div>
+    <h2>QR Code Generator</h2>
+
+    <input type="number" id="quantity" min="1" max="100" value="1" placeholder="How many QR codes?" />
+    <input type="text" id="size" value="400x400" placeholder="Image size (e.g. 400x400)" />
+
+    <div id="links-container"></div>
+
+    <button id="preview-btn">Generate Preview (First QR)</button>
+    <img id="preview" src="" alt="QR Preview" style="display:none;" />
+    <button id="export-btn" disabled>Export All QR Codes</button>
+  </div>
+
+  <footer>
+    Developed by <strong>Siri Saksiri</strong> (PDS Computer Club’s President)
+  </footer>
+
+  <script>
   const quantityInput = document.getElementById('quantity');
   const sizeInput = document.getElementById('size');
   const linksContainer = document.getElementById('links-container');
@@ -79,3 +281,5 @@
   jszipScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
   document.body.appendChild(jszipScript);
 </script>
+</body>
+</html>
